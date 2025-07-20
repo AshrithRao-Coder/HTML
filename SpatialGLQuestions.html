@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Non Verbal Reasoning Quiz (Hidden Shape)</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f8f8f8; }
+    .container { max-width: 520px; margin: 40px auto; background: #fff; border-radius: 12px; box-shadow: 0 0 16px #ddd; padding: 2em; }
+    .q-num { font-weight: bold; }
+    .shape-img { display: block; margin: 0 auto 1em; }
+    .options { display: flex; justify-content: space-between; margin-bottom: 1em; }
+    .option { flex: 1; margin: 0 4px; }
+    .option svg { border: 2px solid #ddd; border-radius: 6px; cursor: pointer; transition: border 0.2s; background: #fff; width: 80px; height: 80px; }
+    .option.selected svg { border-color: #2196f3; }
+    .option.correct svg { border-color: #4caf50; }
+    .option.incorrect svg { border-color: #d32f2f; opacity:0.5; }
+    .option-label { text-align: center; font-weight: bold; margin-top: 4px; }
+    .result { font-weight: bold; margin: 1em 0; }
+    .timer { font-size: 1.1em; font-weight: bold; color: #d32f2f; margin-bottom: 1em; text-align: right;}
+    .btn { background: #2196f3; color: #fff; border: none; padding: 0.7em 2em; border-radius: 6px; font-size: 1em; cursor: pointer; margin-top: 1em; }
+    .btn:disabled { background: #aaa; }
+    .score-summary { font-size: 1.2em; margin-top: 2em; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="quiz-area"></div>
+    <div id="score-area" style="display:none;"></div>
+  </div>
+  <script>
+    // Each array: [hiddenShapeSVG, [A, B, C, D], correctAnswerIndex]
+    const questions = [
+      // Q1
+      [
+        `<svg width="80" height="80"><rect x="10" y="10" width="60" height="60" fill="none" stroke="#333" stroke-width="2"/><line x1="10" y1="10" x2="70" y2="70" stroke="#333"/><line x1="10" y1="70" x2="70" y2="10" stroke="#333"/></svg>`,
+        [
+          `<svg width="80" height="80"><rect x="10" y="10" width="60" height="60" fill="none" stroke="#333" stroke-width="2"/></svg>`,
+          `<svg width="80" height="80"><rect x="10" y="10" width="60" height="60" fill="none" stroke="#333" stroke-width="2"/><line x1="10" y1="10" x2="70" y2="70" stroke="#333"/><line x1="10" y1="70" x2="70" y2="10" stroke="#333"/></svg>`,
+          `<svg width="80" height="80"><rect x="20" y="20" width="40" height="40" fill="none" stroke="#333" stroke-width="2"/></svg>`,
+          `<svg width="80" height="80"><rect x="10" y="10" width="60" height="60" fill="none" stroke="#333" stroke-width="2"/><line x1="40" y1="10" x2="40" y2="70" stroke="#333"/></svg>`
+        ],
+        1
+      ],
+      // Q2
+      [
+        `<svg width="80" height="80"><polygon points="40,10 70,70 10,70" fill="none" stroke="#333" stroke-width="2"/><line x1="40" y1="10" x2="40" y2="70" stroke="#333"/></svg>`,
+        [
+          `<svg width="80" height="80"><polygon points="40,10 70,70 10,70" fill="none" stroke="#333" stroke-width="2"/></svg>`,
+          `<svg width="80" height="80"><polygon points="40,10 70,70 10,70" fill="none" stroke="#333" stroke-width="2"/><line x1="40" y1="10" x2="40" y2="70" stroke="#333"/></svg>`,
+          `<svg width="80" height="80"><polygon points="10,10 70,10 40,70" fill="none" stroke="#333" stroke-width="2"/></svg>`,
+          `<svg width="80" height="80"><polygon points="40,10 70,70 10,70" fill="none" stroke="#333" stroke-width="2"/><line x1="10" y1="70" x2="70" y2="70" stroke="#333"/></svg>`
+        ],
+        1
+      ],
+      // Q3
+      [
+        `<svg width="80" height="80"><rect x="20" y="20" width="40" height="40" fill="none" stroke="#333" stroke-width="2"/><line x1="20" y1="40" x2="60" y2="40" stroke="#333"/></svg>`,
+        [
+          `<svg width="80" height="80"><rect x="10" y="10" width="60" height="60" fill="none" stroke="#333" stroke-width="2"/><line x1="40" y1="10" x2="40" y2="70" stroke="#333"/></svg>`,
+          `<svg width="80" height="80"><rect x="20" y="20" width="40" height="40" fill="none" stroke="#333" stroke-width="2"/><line x1="20" y1="40" x2="60" y2="40" stroke="#333"/></svg>`,
+          `<svg width="80" height="80"><rect x="20" y="20" width="40" height="40" fill="none" stroke="#333" stroke-width="2"/><line x1="20" y1="60" x2="60" y2="60" stroke="#333"/></svg>`,
+          `<svg width="80" height="80"><rect x="20" y="20" width="40" height="40" fill="none" stroke="#333" stroke-width="2"/></svg>`
+        ],
+        1
+      ],
+      // Q4
+      [
+        `<svg width="80" height="80"><polygon points="40,10 70,40 40,70 10,40" fill="none" stroke="#333" stroke-width="2"/><line x1="10" y1="40" x2="70" y2="40" stroke="#333"/></svg>`,
+        [
+          `<svg width="80" height="80"><polygon points="40,10 70,40 40,70 10,40" fill="none" stroke="#333" stroke-width="2"/></svg>`,
+          `<svg width="80" height="80"><polygon points="40,10 70,40 40,70 10,40" fill="none" stroke="#333" stroke-width="2"/><line x1="10" y1="40" x2="70" y2="40" stroke="#333"/></svg>`,
+          `<svg width="80" height="80"><rect x="20" y="20" width="40" height="40" fill="none" stroke="#333" stroke-width="2"/></svg>`,
+          `<svg width="80" height="80"><polygon points="40,10 70,40 10,40" fill="none" stroke="#333" stroke-width="2"/></svg>`
+        ],
+        1
+      ],
+      // Q5
+      [
+        `<svg width="80" height="80"><polygon points="40,10 70,70 10,70" fill="none" stroke="#333" stroke-width="2"/><line x1="10" y1="70" x2="70" y2="70" stroke="#333"/><line x1="40" y1="10" x2="40" y2="70" stroke="#333"/></svg>`,
+        [
+          `<svg width="80" height="80"><polygon points="40,10 70,70 10,70" fill="none" stroke="#333" stroke-width="2"/><line x1="40" y1="10" x2="40" y2="70" stroke="#333"/></svg>`,
+          `<svg width="80" height="80"><polygon points="40,10 70,70 10,70" fill="none" stroke="#333" stroke-width="2"/><line x1="10" y1="70" x2="70" y2="70" stroke="#333"/><line x1="40" y1="10" x2="40" y2="70" stroke="#333"/></svg>`,
+          `<svg width="80" height="80"><polygon points="40,10 70,70 10,70" fill="none" stroke="#333" stroke-width="2"/><line x1="10" y1="70" x2="40" y2="10" stroke="#333"/></svg>`,
+          `<svg width="80" height="80"><polygon points="40,10 70,70 10,70" fill="none" stroke="#333" stroke-width="2"/></svg>`
+        ],
+        1
+      ],
+      // Q6
+      [
+        `<svg width="80" height="80"><rect x="15" y="15" width="50" height="50" fill="none" stroke="#333" stroke-width="2"/><line x1="40" y1="15" x2="40" y2="65" stroke="#333"/></svg>`,
+        [
+          `<svg width="80" height="80"><rect x="15" y="15" width="50" height="50" fill="none" stroke="#333" stroke-width="2"/><line x1="40" y1="15" x2="40" y2="65" stroke="#333"/></svg>`,
+          `<svg width="80" height="80"><rect x="15" y="15" width="50" height="50" fill="none" stroke="#333" stroke-width="2"/><line x1="15" y1="40" x2="65" y2="40" stroke="#333"/></svg>`,
+          `<svg width="80" height="80"><rect x="15" y="15" width="50" height="50" fill="none" stroke="#333" stroke-width="2"/></svg>`,
+          `<svg width="80" height="80"><rect x="25" y="25" width="30" height="30" fill="none" stroke="#333" stroke-width="2"/></svg>`
+        ],
+        0
+      ],
+      // Q7
+      [
+        `<svg width="80" height="80"><polygon points="10,10 70,10 70,70 10,70" fill="none" stroke="#333" stroke-width="2"/><line x1="10" y1="40" x2="70" y2="40" stroke="#333"/></svg>`,
+        [
+          `<svg width="80" height="80"><polygon points="10,10 70,10 70,70 10,70" fill="none" stroke="#333" stroke-width="2"/><line x1="10" y1="10" x2="70" y2="70" stroke="#333"/></svg>`,
+          `<svg width="80" height="80"><polygon points="10,10 70,10 70,70 10,70" fill="none" stroke="#333" stroke-width="2"/><line x1="10" y1="40" x2="70" y2="40" stroke="#333"/></svg>`,
+          `<svg width="80" height="80"><polygon points="10,10 70,10 70,70 10,70" fill="none" stroke="#333" stroke-width="2"/><line x1="40" y1="10" x2="40" y2="70" stroke="#333"/></svg>`,
+          `<svg width="80" height="80"><polygon points="10,10 70,10 70,70 10,70" fill="none" stroke="#333" stroke-width="2"/></svg>`
+        ],
+        1
+      ],
+      // Q8
+      [
+        `<svg width="80" height="80"><polygon points="40,10 70,40 40,70 10,40" fill="none" stroke="#333" stroke-width="2"/><circle cx="40" cy="40" r="10" fill="none" stroke="#333"/></svg>`,
+        [
+          `<svg width="80" height="80"><polygon points="40,10 70,40 40,70 10,40" fill="none" stroke="#333" stroke-width="2"/><circle cx="40" cy="40" r="20" fill="none" stroke="#333"/></svg>`,
+          `<svg width="80" height="80"><polygon points="40,10 70,40 40,70 10,40" fill="none" stroke="#333" stroke-width="2"/><circle cx="40" cy="40" r="10" fill="none" stroke="#333"/></svg>`,
+          `<svg width="80" height="80"><polygon points="40,10 70,40 40,70 10,40" fill="none" stroke="#333" stroke-width="2"/></svg>`,
+          `<svg width="80" height="80"><polygon points="10,40 70,40 40,70" fill="none" stroke="#333" stroke-width="2"/></svg>`
+        ],
+        1
+      ],
+      // Q9
+      [
+        `<svg width="80" height="80"><circle cx="40" cy="40" r="30" fill="none" stroke="#333" stroke-width="2"/><circle cx="40" cy="40" r="15" fill="none" stroke="#333"/></svg>`,
+        [
+          `<svg width="80" height="80"><circle cx="40" cy="40" r="30" fill="none" stroke="#333" stroke-width="2"/><circle cx="40" cy="40" r="15" fill="none" stroke="#333"/></svg>`,
+          `<svg width="80" height="80"><circle cx="40" cy="40" r="30" fill="none" stroke="#333" stroke-width="2"/></svg>`,
+          `<svg width="80" height="80"><circle cx="40" cy="40" r="15" fill="none" stroke="#333" stroke-width="2"/></svg>`,
+          `<svg width="80" height="80"><circle cx="40" cy="40" r="30" fill="none" stroke="#333" stroke-width="2"/><line x1="25" y1="40" x2="55" y2="40" stroke="#333"/></svg>`
+        ],
+        0
+      ],
+      // Q10
+      [
+        `<svg width="80" height="80"><rect x="20" y="20" width="40" height="40" fill="none" stroke="#333" stroke-width="2"/><line x1="20" y1="20" x2="60" y2="60" stroke="#333"/></svg>`,
+        [
+          `<svg width="80" height="80"><rect x="20" y="20" width="40" height="40" fill="none" stroke="#333" stroke-width="2"/><line x1="20" y1="60" x2="60" y2="20" stroke="#333"/></svg>`,
+          `<svg width="80" height="80"><rect x="20" y="20" width="40" height="40" fill="none" stroke="#333" stroke-width="2"/><line x1="20" y1="20" x2="60" y2="60" stroke="#333"/></svg>`,
+          `<svg width="80" height="80"><rect x="10" y="10" width="60" height="60" fill="none" stroke="#333" stroke-width="2"/></svg>`,
+          `<svg width="80" height="80"><rect x="20" y="20" width="40" height="40" fill="none" stroke="#333" stroke-width="2"/></svg>`
+        ],
+        1
+      ]
+    ];
+
+    let current = 0;
+    let score = 0;
+    let selected = null;
+    let timer = 30;
+    let timerInterval = null;
+    let answered = false;
+
+    function showQuestion() {
+      selected = null;
+      answered = false;
+      timer = 30;
+      clearInterval(timerInterval);
+      const [hiddenShape, opts] = questions[current];
+
+      let html = `
+        <div class="q-num">Question ${current + 1} of ${questions.length}</div>
+        <div class="timer" id="timer">Time left: 30s</div>
+        <div style="text-align:center;margin-bottom:1em;">
+          <div style="margin:0 auto 0.5em;display:inline-block;">${hiddenShape}</div><br>
+          <span>Which option contains the hidden shape?</span>
+        </div>
+        <div class="options">`;
+      ['A','B','C','D'].forEach((label, i) => {
+        html += `
+          <div class="option" id="opt${i}" onclick="selectOption(${i})">
+            ${opts[i]}
+            <div class="option-label">${label}</div>
+          </div>
+        `;
+      });
+      html += `
+        </div>
+        <button class="btn" id="submitBtn" onclick="submitAnswer()" disabled>Submit</button>
+        <div id="resultArea"></div>
+      `;
+      document.getElementById('quiz-area').innerHTML = html;
+      startTimer();
+    }
+
+    window.selectOption = function(idx) {
+      if (answered) return;
+      selected = idx;
+      // Remove selected class from all
+      for (let i = 0; i < 4; ++i) {
+        document.getElementById('opt'+i).classList.remove('selected');
+      }
+      document.getElementById('opt'+idx).classList.add('selected');
+      document.getElementById('submitBtn').disabled = false;
+    };
+
+    function startTimer() {
+      document.getElementById('timer').textContent = `Time left: ${timer}s`;
+      timerInterval = setInterval(() => {
+        timer--;
+        document.getElementById('timer').textContent = `Time left: ${timer}s`;
+        if (timer === 0) {
+          clearInterval(timerInterval);
+          submitAnswer(true);
+        }
+      }, 1000);
+    }
+
+    function submitAnswer(timeout = false) {
+      if (answered) return;
+      answered = true;
+      clearInterval(timerInterval);
+      const correctIdx = questions[current][2];
+      let resultText = '';
+      if (timeout) {
+        resultText = `⏰ Time's up!<br>Correct answer: <b>${['A','B','C','D'][correctIdx]}</b>`;
+      } else if (selected === correctIdx) {
+        resultText = '<span style="color:green;">✔ Correct!</span>';
+        score++;
+      } else {
+        resultText = `❌ Wrong. Correct answer: <b>${['A','B','C','D'][correctIdx]}</b>`;
+      }
+      // Highlight the correct and incorrect options
+      for (let i = 0; i < 4; ++i) {
+        let optDiv = document.getElementById('opt'+i);
+        optDiv.classList.remove('selected');
+        if (i === correctIdx) optDiv.classList.add('correct');
+        else if (!timeout && selected === i) optDiv.classList.add('incorrect');
+      }
+      document.getElementById('resultArea').innerHTML = `<div class="result">${resultText}</div>`;
+      document.getElementById('submitBtn').disabled = true;
+
+      setTimeout(() => {
+        current++;
+        if (current < questions.length) {
+          showQuestion();
+        } else {
+          showScore();
+        }
+      }, 1800);
+    }
+
+    function showScore() {
+      document.getElementById('quiz-area').style.display = 'none';
+      document.getElementById('score-area').style.display = '';
+      document.getElementById('score-area').innerHTML = `
+        <div class="score-summary">
+          <h2>Quiz Complete!</h2>
+          <p>Your score: <b>${score}</b> out of ${questions.length}</p>
+          <button class="btn" onclick="restartQuiz()">Try Again</button>
+        </div>
+      `;
+    }
+
+    window.restartQuiz = function() {
+      current = 0;
+      score = 0;
+      document.getElementById('quiz-area').style.display = '';
+      document.getElementById('score-area').style.display = 'none';
+      showQuestion();
+    };
+
+    // Allow pressing Enter for quick submit
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' && !document.getElementById('submitBtn').disabled) submitAnswer();
+    });
+
+    // Start the quiz
+    showQuestion();
+  </script>
+</body>
+</html>
