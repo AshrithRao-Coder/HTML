@@ -1,152 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>11+ Hidden‑Shape Quiz</title>
+  <meta charset="utf-8">
+  <title>Calibration Tool</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f6f6f6; }
-    .container { max-width: 620px; margin: 40px auto; background: #fff;
-                 padding: 2em; border-radius: 12px; box-shadow: 0 0 15px #ccc; }
-    .qnum { font-weight: bold; margin-bottom: .5em; }
-    .timer { text-align: right; color: #d32f2f; font-weight: bold; }
-    .fragment, .options { text-align: center; }
-    .fragment svg { width: 50px; height: 50px; }
-    .options { display: flex; justify-content: space-between; margin: 1em 0; }
-    .option { cursor: pointer; text-align: center; }
-    .option svg { width: 90px; height: 90px; border: 2px solid #ddd;
-                  border-radius: 8px; transition: border .2s, opacity .2s; }
-    .option.selected svg { border-color: #2196f3; }
-    .option.correct svg  { border-color: #4caf50; }
-    .option.incorrect svg{ border-color: #d32f2f; opacity: .6; }
-    .label { margin-top: .3em; font-weight: bold; }
-    .btn { display: block; margin: auto; padding: .7em 2em;
-           background: #2196f3; color: #fff; border: none;
-           border-radius: 6px; font-size: 1em; cursor: pointer; }
-    .btn:disabled { background: #aaa; }
-    .result { text-align: center; font-weight: bold; margin-top: 1em; }
-    .score { text-align: center; margin-top: 2em; font-size: 1.2em; }
+    body { margin:0; overflow:hidden; }
+    canvas { display:block; cursor: crosshair; }
+    #log { position:fixed; bottom:0; left:0; right:0; background:#000; color:#0f0;
+           font-family:monospace; padding:.5em; max-height:30vh; overflow:auto; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div id="quiz-area"></div>
-    <div id="score-area" style="display:none;"></div>
-  </div>
+  <canvas id="cv"></canvas>
+  <div id="log">Click top‑left, then bottom‑right of each region to log [x,y,w,h].</div>
 
   <script>
-  // — your answer key (B,C,C,B,A,D,D,C,B,C) →
-  const answers = [1,2,2,1,0,3,3,2,1,2];
+    const img = new Image();
+    img.src = 'scan.png';  // your full 587×1330 (10×133) image here
+    const cv = document.getElementById('cv');
+    const ctx = cv.getContext('2d');
+    const log = document.getElementById('log');
+    let clicks = [], regionCount = 0;
 
-  let current = 0, score = 0, selected = null,
-      timer = 30, timerId, answered = false;
+    img.onload = () => {
+      cv.width  = img.width;
+      cv.height = img.height;
+      ctx.drawImage(img,0,0);
+    };
 
-  function showQuestion() {
-    answered = false; selected = null; timer = 30;
-    clearInterval(timerId);
+    cv.addEventListener('click', e => {
+      const rect = cv.getBoundingClientRect();
+      const x = Math.round((e.clientX - rect.left) * (cv.width/rect.width));
+      const y = Math.round((e.clientY - rect.top ) * (cv.height/rect.height));
+      clicks.push({x,y});
+      ctx.fillStyle = 'rgba(255,0,0,0.6)';
+      ctx.fillRect(x-3,y-3,6,6);
 
-    // compute the vertical offset for this row in the big scan:
-    const rowY = current * 133;
-    const qnum = current+1;
-
-    // build the HTML
-    document.getElementById('quiz-area').innerHTML = `
-      <div class="qnum">Question ${qnum} of 10</div>
-      <div class="timer" id="timer">Time left: 30s</div>
-
-      <div class="fragment">
-        <svg viewBox="0 ${rowY} 90 90" xmlns="http://www.w3.org/2000/svg">
-          <image href="scan.png" x="0" y="0" width="587" height="1330"/>
-        </svg>
-      </div>
-
-      <div class="options">
-        ${['A','B','C','D'].map((lab,i)=>
-          `<div class="option" id="opt${i}" onclick="pick(${i})">
-             <svg viewBox="${100 + 110*i} ${rowY} 90 90" xmlns="http://www.w3.org/2000/svg">
-               <image href="scan.png" x="0" y="0" width="587" height="1330"/>
-             </svg>
-             <div class="label">${lab}</div>
-           </div>`
-        ).join('')}
-      </div>
-
-      <button class="btn" id="submitBtn" onclick="submitAnswer()" disabled>Submit</button>
-      <div class="result" id="result"></div>
-    `;
-    startTimer();
-  }
-
-  function pick(i) {
-    if (answered) return;
-    selected = i;
-    document.getElementById('submitBtn').disabled = false;
-    [0,1,2,3].forEach(j=>
-      document.getElementById(`opt${j}`)
-              .classList.toggle('selected', j===i)
-    );
-  }
-
-  function startTimer(){
-    document.getElementById('timer').textContent = `Time left: ${timer}s`;
-    timerId = setInterval(()=>{
-      timer--;
-      document.getElementById('timer').textContent = `Time left: ${timer}s`;
-      if (timer===0) { clearInterval(timerId); submitAnswer(true); }
-    },1000);
-  }
-
-  function submitAnswer(timeout=false) {
-    if (answered) return;
-    answered = true;
-    clearInterval(timerId);
-    const correct = answers[current];
-    const res = document.getElementById('result');
-
-    if (timeout) {
-      res.innerHTML = `⏰ Time's up! Correct: <b>${'ABCD'[correct]}</b>`;
-    } else if (selected===correct) {
-      score++;
-      res.innerHTML = `<span style="color:green;">✔ Correct!</span>`;
-    } else {
-      res.innerHTML = `❌ Wrong! Correct: <b>${'ABCD'[correct]}</b>`;
-    }
-
-    // highlight
-    [0,1,2,3].forEach(i=>{
-      const el = document.getElementById(`opt${i}`);
-      el.classList.remove('selected');
-      if (i===correct)   el.classList.add('correct');
-      else if (i===selected) el.classList.add('incorrect');
+      if (clicks.length === 2) {
+        const [p1,p2] = clicks;
+        const rx = Math.min(p1.x,p2.x), ry = Math.min(p1.y,p2.y);
+        const rw = Math.abs(p2.x-p1.x), rh = Math.abs(p2.y-p1.y);
+        regionCount++;
+        log.innerHTML += `<br>Q${regionCount}: [${rx}, ${ry}, ${rw}, ${rh}]`;
+        clicks = [];
+      }
     });
-
-    setTimeout(()=>{
-      current++;
-      if (current<10) showQuestion();
-      else showScore();
-    }, 1500);
-  }
-
-  function showScore() {
-    document.getElementById('quiz-area').style.display = 'none';
-    document.getElementById('score-area').style.display = '';
-    document.getElementById('score-area').innerHTML = `
-      <div class="score">
-        <h2>Quiz Complete!</h2>
-        <p>Your score: <b>${score}</b> / 10</p>
-        <button class="btn" onclick="restart()">Try Again</button>
-      </div>
-    `;
-  }
-
-  function restart() {
-    current=0; score=0;
-    document.getElementById('quiz-area').style.display = '';
-    document.getElementById('score-area').style.display = 'none';
-    showQuestion();
-  }
-
-  // start
-  showQuestion();
   </script>
 </body>
 </html>
