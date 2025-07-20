@@ -2,171 +2,193 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Hidden‑Shape Quiz (Canvas Crop Method)</title>
+  <title>Hidden‑Shape Quiz (Inline SVG)</title>
   <style>
-    body { background:#f6f6f6; font-family:Arial,sans-serif; }
-    .container { max-width:980px; margin:40px auto; background:#fff;
-                 padding:2em; border-radius:12px; box-shadow:0 0 15px #ccc; }
-    .qnum { font-weight:bold; margin-bottom:.5em; }
-    .timer { text-align:right; color:#d32f2f; font-weight:bold; }
-    .frag, .options { text-align:center; }
-    .frag canvas { border:2px solid #ddd; border-radius:6px; }
-    .options { display:flex; justify-content:space-between; margin:1em 0; }
-    .opt { cursor:pointer; transition:border .2s; }
-    .opt canvas { width:90px; height:90px; border:2px solid #ddd; border-radius:6px; }
-    .opt.selected canvas { border-color:#2196f3; }
-    .opt.correct  canvas { border-color:#4caf50; }
-    .opt.wrong    canvas { border-color:#d32f2f; opacity:.6; }
-    .opt label { display:block; margin-top:4px; font-weight:bold; }
-    .btn { padding:.6em 1.5em; background:#2196f3; color:#fff;
-           border:none; border-radius:6px; font-size:1em; cursor:pointer; }
-    .btn:disabled { background:#aaa; }
-    .result { font-weight:bold; margin:1em 0; text-align:center; }
-    .score { text-align:center; margin-top:2em; }
+    body { font-family: Arial, sans-serif; background: #f6f6f6; }
+    .container { max-width: 600px; margin: 2em auto; background: #fff; padding: 1.5em; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    .question { margin-bottom: 2em; }
+    .fragment, .options { text-align: center; }
+    .fragment svg { width: 60px; height: 60px; }
+    .options { display: flex; justify-content: space-around; }
+    .option { text-align: center; cursor: pointer; }
+    .option svg { width: 80px; height: 80px; border: 2px solid #ddd; border-radius: 6px; transition: border 0.2s; }
+    .option.selected svg { border-color: #2196f3; }
+    .option.correct svg { border-color: #4caf50; }
+    .option.incorrect svg { border-color: #d32f2f; opacity: 0.6; }
+    .label { margin-top: .3em; font-weight: bold; }
   </style>
 </head>
 <body>
   <div class="container">
-    <div id="quiz"></div>
-  </div>
-
-  <script>
-  // ——— 1) Crop definitions ———
-  // You must measure these on your master image (images/page.png)
-  const crops = [
-    // Q1
-    {
-      frag: [  50, 150,  80,  80 ],
-      opts: [
-        [ 200, 140, 100, 100 ],
-        [ 320, 140, 100, 100 ],
-        [ 440, 140, 100, 100 ],
-        [ 560, 140, 100, 100 ]
-      ]
-    },
-    // Q2 … Q10: fill in the rest
-    /* {
-         frag: [ x,y,w,h ],
-         opts: [ [x1,y1,w1,h1], … ]
-       },
-       …
-    */
-  ];
-
-  // ——— 2) Answer key ——— (0=A,1=B,2=C,3=D)
-  const answers = [1,2,2,1,0,3,3,2,1,2];
-
-  // ——— 3) State ———
-  let current=0, score=0, selected=null, timedOut=false;
-  let masterImg = new Image(), timerId;
-
-  // ——— 4) Boot ———
-  masterImg.onload = () => renderQuestion();
-  masterImg.src = 'images/page.png';
-
-  function renderQuestion(){
-    const q = crops[current];
-    const quiz = document.getElementById('quiz');
-    quiz.innerHTML = `
-      <div class="qnum">Question ${current+1} of ${crops.length}</div>
-      <div class="timer" id="timer">Time left: 30s</div>
-      <div class="frag"><canvas id="fragCan" width="${q.frag[2]}" height="${q.frag[3]}"></canvas></div>
+    
+    <!-- QUESTION 1 -->
+    <div class="question" id="q1">
+      <div class="fragment">
+        <!-- small right‑angled trapezoid -->
+        <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="10,10 35,10 30,25 10,25" 
+                   fill="none" stroke="#111" stroke-width="2"/>
+        </svg>
+      </div>
       <div class="options">
-        ${['A','B','C','D'].map((L,i)=>`
-          <div class="opt" id="opt${i}" onclick="pick(${i})">
-            <canvas id="optCan${i}"
-                    width="${q.opts[i][2]}" height="${q.opts[i][3]}"></canvas>
-            <label>${L}</label>
-          </div>
-        `).join('')}
+        <div class="option" data-q="1" data-choice="A">
+          <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+            <!-- Option A: two concentric squares -->
+            <rect x="15" y="15" width="60" height="60" fill="none" stroke="#222" stroke-width="2"/>
+            <rect x="30" y="30" width="30" height="30" fill="none" stroke="#222" stroke-width="2"/>
+          </svg>
+          <div class="label">A</div>
+        </div>
+        <div class="option" data-q="1" data-choice="B">
+          <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+            <!-- Option B: diagonal + small square -->
+            <rect x="15" y="15" width="60" height="60" fill="none" stroke="#222" stroke-width="2"/>
+            <rect x="35" y="35" width="20" height="20" fill="none" stroke="#222" stroke-width="2"/>
+            <line x1="15" y1="15" x2="75" y2="75" stroke="#222" stroke-width="1.5"/>
+          </svg>
+          <div class="label">B</div>
+        </div>
+        <div class="option" data-q="1" data-choice="C">
+          <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+            <!-- Option C: correct answer -->
+            <rect x="20" y="20" width="50" height="50" fill="none" stroke="#222" stroke-width="2"/>
+            <rect x="40" y="40" width="10" height="20" fill="none" stroke="#222" stroke-width="2"/>
+          </svg>
+          <div class="label">C</div>
+        </div>
+        <div class="option" data-q="1" data-choice="D">
+          <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+            <!-- Option D: single small square -->
+            <rect x="30" y="30" width="30" height="30" fill="none" stroke="#222" stroke-width="2"/>
+          </svg>
+          <div class="label">D</div>
+        </div>
       </div>
-      <div style="text-align:center;">
-        <button class="btn" id="submitBtn" onclick="submit()" disabled>Submit</button>
+    </div>
+    
+    <!-- QUESTION 2 -->
+    <div class="question" id="q2">
+      <div class="fragment">
+        <!-- upright isosceles triangle -->
+        <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="10,40 25,10 40,40" fill="none" stroke="#111" stroke-width="2"/>
+        </svg>
       </div>
-      <div class="result" id="result"></div>
-    `;
-
-    // draw fragment + options onto canvases
-    // frag
-    let [sx,sy,sw,sh] = q.frag,
-        fcan = document.getElementById('fragCan').getContext('2d');
-    fcan.drawImage(masterImg, sx,sy,sw,sh, 0,0, sw,sh);
-
-    // options
-    q.opts.forEach((r,i)=>{
-      let [x,y,w,h] = r,
-          ctx = document.getElementById('optCan'+i).getContext('2d');
-      ctx.drawImage(masterImg, x,y,w,h, 0,0, w,h);
-    });
-
-    // reset state
-    selected = null; timedOut = false;
-    document.getElementById('submitBtn').disabled = true;
-    ['A','B','C','D'].forEach((_,i)=>{
-      document.getElementById('opt'+i).className = 'opt';
-    });
-    document.getElementById('result').innerHTML = '';
-
-    // start timer
-    let t=30;
-    document.getElementById('timer').textContent = `Time left: ${t}s`;
-    clearInterval(timerId);
-    timerId = setInterval(()=>{
-      t--; document.getElementById('timer').textContent = `Time left: ${t}s`;
-      if(t===0){ clearInterval(timerId); timedOut=true; submit(); }
-    },1000);
-  }
-
-  function pick(i){
-    if(selected!==null) return;
-    selected=i;
-    document.getElementById('submitBtn').disabled = false;
-    [0,1,2,3].forEach(j=>
-      document.getElementById('opt'+j)
-              .classList.toggle('selected', j===i)
-    );
-  }
-
-  function submit(){
-    if(selected===null && !timedOut) return;
-    clearInterval(timerId);
-    const correct = answers[current],
-          resDiv = document.getElementById('result');
-
-    if(timedOut){
-      resDiv.innerHTML = `⏰ Time's up! Answer was <b>${'ABCD'[correct]}</b>`;
-    } else if(selected===correct){
-      resDiv.innerHTML = `<span style="color:green;">✔ Correct!</span>`;
-      score++;
-    } else {
-      resDiv.innerHTML = `❌ Wrong. Correct: <b>${'ABCD'[correct]}</b>`;
-    }
-
-    // mark canvases
-    [0,1,2,3].forEach(i=>{
-      const el = document.getElementById('opt'+i);
-      if(i===correct)   el.classList.add('correct');
-      else if(i===selected) el.classList.add('wrong');
-      el.classList.remove('selected');
-    });
-
-    // next after pause
-    setTimeout(()=>{
-      current++;
-      if(current < crops.length) renderQuestion();
-      else showScore();
-    },1500);
-  }
-
-  function showScore(){
-    document.getElementById('quiz').innerHTML = `
-      <div class="score">
-        <h2>All Done!</h2>
-        <p>Your score: <b>${score}</b> / ${crops.length}</p>
-        <button class="btn" onclick="location.reload()">Try Again</button>
+      <div class="options">
+        <div class="option" data-q="2" data-choice="A">
+          <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="20,60 70,60 45,20" fill="none" stroke="#222" stroke-width="2"/>
+            <polygon points="30,45 60,45 45,25" fill="none" stroke="#222" stroke-width="2"/>
+          </svg>
+          <div class="label">A</div>
+        </div>
+        <div class="option" data-q="2" data-choice="B">
+          <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="30,80 70,80 50,30" fill="none" stroke="#222" stroke-width="2"/>
+            <polygon points="35,70 65,70 50,40" fill="none" stroke="#222" stroke-width="2"/>
+          </svg>
+          <div class="label">B</div>
+        </div>
+        <div class="option" data-q="2" data-choice="C">
+          <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="30,20 70,20 50,70" fill="none" stroke="#222" stroke-width="2"/>
+            <polygon points="40,40 60,40 50,60" fill="none" stroke="#222" stroke-width="2"/>
+          </svg>
+          <div class="label">C</div>
+        </div>
+        <div class="option" data-q="2" data-choice="D">
+          <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="20,50 60,50 40,20" fill="none" stroke="#222" stroke-width="2"/>
+            <polygon points="30,40 50,40 40,25" fill="none" stroke="#222" stroke-width="2"/>
+          </svg>
+          <div class="label">D</div>
+        </div>
       </div>
-    `;
-  }
-  </script>
+    </div>
+    
+    <!-- QUESTION 3 -->
+    <div class="question" id="q3">
+      <div class="fragment">
+        <!-- concentric squares -->
+        <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="10" width="30" height="30" fill="none" stroke="#111" stroke-width="2"/>
+          <rect x="17" y="17" width="16" height="16" fill="none" stroke="#111" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="options">
+        <div class="option" data-q="3" data-choice="A">
+          <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" y="20" width="50" height="50" fill="none" stroke="#222" stroke-width="2"/>
+            <rect x="30" y="30" width="30" height="30" fill="none" stroke="#222" stroke-width="2"/>
+            <rect x="40" y="40" width="10" height="10" fill="none" stroke="#222" stroke-width="2"/>
+          </svg>
+          <div class="label">A</div>
+        </div>
+        <div class="option" data-q="3" data-choice="B">
+          <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+            <rect x="25" y="25" width="40" height="40" fill="none" stroke="#222" stroke-width="2"/>
+            <rect x="35" y="35" width="20" height="20" fill="none" stroke="#222" stroke-width="2"/>
+          </svg>
+          <div class="label">B</div>
+        </div>
+        <div class="option" data-q="3" data-choice="C">
+          <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+            <rect x="10" y="10" width="40" height="40" fill="none" stroke="#222" stroke-width="2"/>
+            <rect x="20" y="20" width="20" height="20" fill="none" stroke="#222" stroke-width="2"/>
+          </svg>
+          <div class="label">C</div>
+        </div>
+        <div class="option" data-q="3" data-choice="D">
+          <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+            <rect x="30" y="30" width="30" height="30" fill="none" stroke="#222" stroke-width="2"/>
+          </svg>
+          <div class="label">D</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- QUESTION 4 -->
+    <div class="question" id="q4">
+      <div class="fragment">
+        <!-- upside‑down triangle -->
+        <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="10,10 40,10 25,40" fill="none" stroke="#111" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="options">
+        <div class="option" data-q="4" data-choice="A">
+          <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="30,70 70,70 50,30" fill="none" stroke="#222" stroke-width="2"/>
+            <polygon points="35,60 65,60 50,40" fill="none" stroke="#222" stroke-width="2"/>
+          </svg>
+          <div class="label">A</div>
+        </div>
+        <div class="option" data-q="4" data-choice="B">
+          <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="30,20 70,20 50,70" fill="none" stroke="#222" stroke-width="2"/>
+            <polygon points="40,40 60,40 50,60" fill="none" stroke="#222" stroke-width="2"/>
+          </svg>
+          <div class="label">B</div>
+        </div>
+        <div class="option" data-q="4" data-choice="C">
+          <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="20,50 60,50 40,20" fill="none" stroke="#222" stroke-width="2"/>
+            <polygon points="30,40 50,40 40,25" fill="none" stroke="#222" stroke-width="2"/>
+          </svg>
+          <div class="label">C</div>
+        </div>
+        <div class="option" data-q="4" data-choice="D">
+          <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="40,30 60,30 50,50" fill="none" stroke="#222" stroke-width="2"/>
+            <polygon points="45,45 55,45 50,35" fill="none" stroke="#222" stroke-width="2"/>
+          </svg>
+          <div class="label">D</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- TODO: repeat the same SVG‑in‑HTML pattern for Q5–Q10 -->
+    
+  </div>
 </body>
 </html>
