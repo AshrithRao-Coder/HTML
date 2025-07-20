@@ -5,7 +5,7 @@
   <title>Challenging Hidden Shape Quiz</title>
   <style>
     body { font-family: Arial, sans-serif; background: #f8f8f8; }
-    .container { max-width: 650px; margin: 40px auto; background: #fff; border-radius: 16px; box-shadow: 0 0 18px #ddd; padding: 2.5em; }
+    .container { max-width: 680px; margin: 40px auto; background: #fff; border-radius: 18px; box-shadow: 0 0 18px #ddd; padding: 2.7em; }
     .q-num { font-weight: bold; }
     .shape-img { display: block; margin: 0 auto 1em; }
     .options { display: flex; justify-content: space-between; margin-bottom: 1em; }
@@ -28,117 +28,118 @@
     <div id="score-area" style="display:none;"></div>
   </div>
   <script>
-    // 10 tough, original SVG fragment questions. Only one answer has the fragment, sometimes disguised!
+    // 10 truly hard, no-scale-change, orientation-matching hidden shape puzzles!
     const questions = [
       [
-        // Q1: Angular "N" fragment
-        `<svg width="60" height="60"><polyline points="10,50 30,10 50,50" fill="none" stroke="#333" stroke-width="4"/></svg>`,
+        // Q1: "double chevron" zigzag
+        `<svg width="60" height="60"><polyline points="10,40 20,20 30,40 40,20 50,40" fill="none" stroke="#333" stroke-width="4"/></svg>`,
         [
-          `<svg width="100" height="100"><rect x="10" y="10" width="80" height="80" fill="none" stroke="#222" stroke-width="3"/><polyline points="30,80 50,20 80,80" fill="none" stroke="#888" stroke-width="4"/><polyline points="30,80 60,50 80,80" fill="none" stroke="#222" stroke-width="3"/></svg>`,
-          `<svg width="100" height="100"><circle cx="50" cy="50" r="38" fill="none" stroke="#333" stroke-width="3"/><polyline points="20,80 50,20 80,80" fill="none" stroke="#333" stroke-width="4"/></svg>`,
-          `<svg width="100" height="100"><polygon points="20,90 80,90 50,20" fill="none" stroke="#333" stroke-width="3"/><line x1="35" y1="75" x2="65" y2="75" stroke="#333" stroke-width="4"/></svg>`,
-          `<svg width="100" height="100"><rect x="25" y="25" width="50" height="50" fill="none" stroke="#333" stroke-width="3"/><line x1="35" y1="75" x2="65" y2="75" stroke="#888" stroke-width="4"/></svg>`
-        ],
-        1 // Option B has the N shape as a hidden zigzag
-      ],
-      [
-        // Q2: Sharp "V" fragment
-        `<svg width="60" height="60"><polyline points="10,40 30,20 50,40" fill="none" stroke="#333" stroke-width="5"/></svg>`,
-        [
-          `<svg width="100" height="100"><polygon points="10,90 50,15 90,90" fill="none" stroke="#333" stroke-width="4"/><line x1="50" y1="15" x2="50" y2="90" stroke="#888" stroke-width="3"/></svg>`,
-          `<svg width="100" height="100"><circle cx="50" cy="50" r="42" fill="none" stroke="#888" stroke-width="4"/><polyline points="30,80 50,35 70,80" fill="none" stroke="#333" stroke-width="5"/></svg>`,
-          `<svg width="100" height="100"><rect x="25" y="30" width="50" height="40" fill="none" stroke="#333" stroke-width="3"/><line x1="25" y1="70" x2="75" y2="30" stroke="#333" stroke-width="4"/></svg>`,
-          `<svg width="100" height="100"><ellipse cx="50" cy="60" rx="35" ry="25" fill="none" stroke="#333" stroke-width="3"/><line x1="35" y1="75" x2="65" y2="45" stroke="#333" stroke-width="4"/></svg>`
-        ],
-        1 // Option B: "V" shape matches, but embedded in an arc
-      ],
-      [
-        // Q3: Slanted "Z" fragment
-        `<svg width="60" height="60"><polyline points="10,20 50,20 10,50 50,50" fill="none" stroke="#333" stroke-width="3"/></svg>`,
-        [
-          `<svg width="100" height="100"><rect x="15" y="15" width="70" height="70" fill="none" stroke="#222" stroke-width="2"/><polyline points="20,30 80,30 20,80 80,80" fill="none" stroke="#333" stroke-width="3"/></svg>`,
-          `<svg width="100" height="100"><circle cx="50" cy="50" r="45" fill="none" stroke="#333" stroke-width="2"/><polyline points="30,70 50,40 70,70" fill="none" stroke="#333" stroke-width="4"/></svg>`,
-          `<svg width="100" height="100"><polygon points="20,85 80,85 50,20" fill="none" stroke="#333" stroke-width="3"/><line x1="60" y1="80" x2="80" y2="40" stroke="#888" stroke-width="3"/></svg>`,
-          `<svg width="100" height="100"><rect x="40" y="10" width="10" height="80" fill="none" stroke="#333" stroke-width="3"/><polyline points="30,60 50,40 70,60" fill="none" stroke="#333" stroke-width="4"/></svg>`
-        ],
-        0 // Option A contains the full zigzag at the top left, rotated!
-      ],
-      [
-        // Q4: Double arch
-        `<svg width="60" height="60"><path d="M10,40 Q30,10 50,40" fill="none" stroke="#333" stroke-width="3"/><path d="M15,40 Q30,20 45,40" fill="none" stroke="#333" stroke-width="3"/></svg>`,
-        [
-          `<svg width="100" height="100"><path d="M20,70 Q50,20 80,70" fill="none" stroke="#333" stroke-width="4"/><path d="M35,60 Q50,40 65,60" fill="none" stroke="#333" stroke-width="3"/></svg>`,
-          `<svg width="100" height="100"><circle cx="50" cy="60" r="20" fill="none" stroke="#333" stroke-width="3"/></svg>`,
-          `<svg width="100" height="100"><ellipse cx="50" cy="55" rx="28" ry="20" fill="none" stroke="#333" stroke-width="3"/><rect x="40" y="60" width="20" height="25" fill="none" stroke="#333" stroke-width="2"/></svg>`,
-          `<svg width="100" height="100"><rect x="25" y="25" width="50" height="50" fill="none" stroke="#333" stroke-width="2"/><line x1="25" y1="75" x2="75" y2="25" stroke="#333" stroke-width="3"/></svg>`
-        ],
-        0
-      ],
-      [
-        // Q5: Diagonal cross with horizontal
-        `<svg width="60" height="60"><line x1="10" y1="10" x2="50" y2="50" stroke="#333" stroke-width="3"/><line x1="10" y1="50" x2="50" y2="10" stroke="#333" stroke-width="3"/><line x1="10" y1="30" x2="50" y2="30" stroke="#333" stroke-width="3"/></svg>`,
-        [
-          `<svg width="100" height="100"><circle cx="50" cy="50" r="45" fill="none" stroke="#333" stroke-width="2"/><line x1="20" y1="60" x2="80" y2="40" stroke="#333" stroke-width="3"/></svg>`,
-          `<svg width="100" height="100"><rect x="15" y="15" width="70" height="70" fill="none" stroke="#222" stroke-width="2"/><line x1="15" y1="50" x2="85" y2="50" stroke="#333" stroke-width="3"/><line x1="15" y1="15" x2="85" y2="85" stroke="#333" stroke-width="3"/><line x1="15" y1="85" x2="85" y2="15" stroke="#333" stroke-width="3"/></svg>`,
-          `<svg width="100" height="100"><polygon points="10,10 90,50 10,90" fill="none" stroke="#333" stroke-width="3"/><line x1="10" y1="50" x2="90" y2="50" stroke="#333" stroke-width="2"/></svg>`,
-          `<svg width="100" height="100"><rect x="20" y="40" width="60" height="10" fill="#333"/></svg>`
+          `<svg width="100" height="100"><rect x="18" y="18" width="64" height="64" fill="none" stroke="#444" stroke-width="2"/><polyline points="10,80 30,40 50,80 70,40 90,80" fill="none" stroke="#999" stroke-width="4"/></svg>`,
+          `<svg width="100" height="100"><polyline points="10,40 20,20 30,40 40,20 50,40" fill="none" stroke="#333" stroke-width="4"/><polygon points="30,40 45,80 15,80" fill="none" stroke="#888" stroke-width="2"/></svg>`, // Correct (fragment appears without scale change, not as whole option)
+          `<svg width="100" height="100"><polyline points="50,20 60,40 70,20 80,40 90,20" fill="none" stroke="#333" stroke-width="4"/></svg>`,
+          `<svg width="100" height="100"><rect x="30" y="30" width="40" height="40" fill="none" stroke="#333" stroke-width="3"/><line x1="30" y1="70" x2="70" y2="30" stroke="#333" stroke-width="2"/></svg>`
         ],
         1
       ],
       [
-        // Q6: Forked "Y"
-        `<svg width="60" height="60"><polyline points="30,10 30,40 10,50" fill="none" stroke="#333" stroke-width="3"/><polyline points="30,40 50,50" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+        // Q2: "spike + curve"
+        `<svg width="60" height="60"><polyline points="20,50 30,20 40,40" fill="none" stroke="#333" stroke-width="4"/><path d="M40,40 Q50,55 55,55" fill="none" stroke="#333" stroke-width="4"/></svg>`,
         [
-          `<svg width="100" height="100"><polyline points="50,20 50,60 20,80" fill="none" stroke="#333" stroke-width="4"/><polyline points="50,60 80,80" fill="none" stroke="#333" stroke-width="4"/></svg>`,
-          `<svg width="100" height="100"><polyline points="20,40 50,20 80,40 50,80 20,40" fill="none" stroke="#333" stroke-width="4"/></svg>`,
-          `<svg width="100" height="100"><rect x="10" y="10" width="80" height="80" fill="none" stroke="#222" stroke-width="3"/><line x1="50" y1="50" x2="90" y2="90" stroke="#333" stroke-width="2"/></svg>`,
-          `<svg width="100" height="100"><polygon points="10,80 50,15 90,80" fill="none" stroke="#333" stroke-width="4"/></svg>`
-        ],
-        0 // Option A has the Y shape, rotated
-      ],
-      [
-        // Q7: 3-rung ladder
-        `<svg width="60" height="60"><rect x="15" y="10" width="30" height="40" fill="none" stroke="#333" stroke-width="3"/><line x1="15" y1="20" x2="45" y2="20" stroke="#333" stroke-width="2"/><line x1="15" y1="30" x2="45" y2="30" stroke="#333" stroke-width="2"/><line x1="15" y1="40" x2="45" y2="40" stroke="#333" stroke-width="2"/></svg>`,
-        [
-          `<svg width="100" height="100"><rect x="30" y="30" width="40" height="40" fill="none" stroke="#222" stroke-width="3"/><line x1="30" y1="40" x2="70" y2="40" stroke="#333" stroke-width="2"/><line x1="30" y1="60" x2="70" y2="60" stroke="#333" stroke-width="2"/></svg>`,
-          `<svg width="100" height="100"><rect x="20" y="20" width="60" height="60" fill="none" stroke="#333" stroke-width="3"/><line x1="20" y1="35" x2="80" y2="35" stroke="#333" stroke-width="2"/><line x1="20" y1="55" x2="80" y2="55" stroke="#333" stroke-width="2"/><line x1="20" y1="75" x2="80" y2="75" stroke="#333" stroke-width="2"/></svg>`, // 3-rung ladder
-          `<svg width="100" height="100"><polygon points="10,90 90,90 50,20" fill="none" stroke="#333" stroke-width="3"/></svg>`,
-          `<svg width="100" height="100"><ellipse cx="50" cy="50" rx="35" ry="25" fill="none" stroke="#333" stroke-width="3"/></svg>`
-        ],
-        1
-      ],
-      [
-        // Q8: Arrow fragment
-        `<svg width="60" height="60"><polyline points="10,30 30,10 50,30" fill="none" stroke="#333" stroke-width="4"/><line x1="30" y1="10" x2="30" y2="50" stroke="#333" stroke-width="4"/></svg>`,
-        [
-          `<svg width="100" height="100"><rect x="35" y="35" width="30" height="30" fill="none" stroke="#333" stroke-width="3"/><line x1="50" y1="35" x2="50" y2="65" stroke="#333" stroke-width="3"/></svg>`,
-          `<svg width="100" height="100"><polygon points="20,80 50,20 80,80" fill="none" stroke="#333" stroke-width="3"/><line x1="50" y1="20" x2="50" y2="80" stroke="#333" stroke-width="4"/></svg>`, // full arrow
-          `<svg width="100" height="100"><ellipse cx="50" cy="60" rx="35" ry="25" fill="none" stroke="#333" stroke-width="3"/><line x1="30" y1="60" x2="70" y2="60" stroke="#333" stroke-width="2"/></svg>`,
-          `<svg width="100" height="100"><polygon points="10,10 90,60 10,90" fill="none" stroke="#333" stroke-width="3"/></svg>`
-        ],
-        1
-      ],
-      [
-        // Q9: Spiral start
-        `<svg width="60" height="60"><path d="M38,30 Q46,18 54,30 Q58,36 54,44 Q48,54 38,50 Q30,46 32,38" fill="none" stroke="#333" stroke-width="3"/></svg>`,
-        [
-          `<svg width="100" height="100"><circle cx="50" cy="50" r="40" fill="none" stroke="#333" stroke-width="3"/><circle cx="50" cy="50" r="15" fill="none" stroke="#888" stroke-width="3"/></svg>`,
-          `<svg width="100" height="100"><rect x="10" y="10" width="80" height="80" fill="none" stroke="#222" stroke-width="2"/><polyline points="40,80 50,20 60,80" fill="none" stroke="#333" stroke-width="3"/></svg>`,
-          `<svg width="100" height="100"><path d="M55,50 Q75,20 90,50 Q98,70 90,90 Q70,110 50,90 Q35,75 40,50" fill="none" stroke="#333" stroke-width="4"/></svg>`, // spiral pattern
-          `<svg width="100" height="100"><ellipse cx="50" cy="50" rx="35" ry="25" fill="none" stroke="#333" stroke-width="3"/></svg>`
+          `<svg width="100" height="100"><circle cx="60" cy="60" r="35" fill="none" stroke="#333" stroke-width="3"/><polyline points="40,80 50,50 60,70" fill="none" stroke="#999" stroke-width="4"/></svg>`,
+          `<svg width="100" height="100"><polyline points="20,80 40,30 60,50" fill="none" stroke="#333" stroke-width="4"/><path d="M60,50 Q80,75 90,75" fill="none" stroke="#333" stroke-width="4"/></svg>`,
+          `<svg width="100" height="100"><polyline points="20,50 30,20 40,40" fill="none" stroke="#333" stroke-width="4"/><path d="M40,40 Q50,55 55,55" fill="none" stroke="#333" stroke-width="4"/><ellipse cx="45" cy="45" rx="10" ry="5" fill="none" stroke="#999" stroke-width="2"/></svg>`, // Correct, exact overlay of fragment
+          `<svg width="100" height="100"><ellipse cx="45" cy="55" rx="20" ry="8" fill="none" stroke="#888" stroke-width="3"/></svg>`
         ],
         2
       ],
       [
-        // Q10: Tilted diamond + X
-        `<svg width="60" height="60"><polygon points="30,10 50,30 30,50 10,30" fill="none" stroke="#333" stroke-width="3"/><line x1="10" y1="30" x2="50" y2="30" stroke="#333" stroke-width="2"/><line x1="30" y1="10" x2="30" y2="50" stroke="#333" stroke-width="2"/></svg>`,
+        // Q3: diagonal "U" with horizontal top
+        `<svg width="60" height="60"><polyline points="10,15 20,45 40,45 50,15" fill="none" stroke="#333" stroke-width="4"/></svg>`,
         [
-          `<svg width="100" height="100"><polygon points="50,20 70,50 50,80 30,50" fill="none" stroke="#333" stroke-width="3"/><line x1="30" y1="50" x2="70" y2="50" stroke="#333" stroke-width="2"/><line x1="50" y1="20" x2="50" y2="80" stroke="#333" stroke-width="2"/></svg>`, // full diamond+cross
-          `<svg width="100" height="100"><circle cx="50" cy="50" r="40" fill="none" stroke="#888" stroke-width="3"/><rect x="20" y="20" width="60" height="60" fill="none" stroke="#333" stroke-width="2"/></svg>`,
-          `<svg width="100" height="100"><ellipse cx="50" cy="50" rx="25" ry="38" fill="none" stroke="#333" stroke-width="3"/></svg>`,
-          `<svg width="100" height="100"><polygon points="15,15 85,50 15,85" fill="none" stroke="#333" stroke-width="3"/></svg>`
+          `<svg width="100" height="100"><polyline points="10,25 30,85 70,85 90,25" fill="none" stroke="#333" stroke-width="4"/><polyline points="30,85 50,25 70,85" fill="none" stroke="#888" stroke-width="3"/></svg>`,
+          `<svg width="100" height="100"><rect x="20" y="40" width="60" height="40" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+          `<svg width="100" height="100"><polyline points="30,35 40,65 60,65 70,35" fill="none" stroke="#333" stroke-width="4"/></svg>`,
+          `<svg width="100" height="100"><polyline points="10,15 20,45 40,45 50,15" fill="none" stroke="#333" stroke-width="4"/><ellipse cx="30" cy="30" rx="8" ry="4" fill="none" stroke="#999" stroke-width="2"/></svg>` // Correct, fragment is overlaid with extra
+        ],
+        3
+      ],
+      [
+        // Q4: "double box" with midline
+        `<svg width="60" height="60"><rect x="10" y="10" width="40" height="40" fill="none" stroke="#333" stroke-width="3"/><rect x="20" y="20" width="20" height="20" fill="none" stroke="#333" stroke-width="3"/><line x1="30" y1="10" x2="30" y2="50" stroke="#333" stroke-width="2"/></svg>`,
+        [
+          `<svg width="100" height="100"><rect x="25" y="25" width="50" height="50" fill="none" stroke="#333" stroke-width="3"/><rect x="35" y="35" width="30" height="30" fill="none" stroke="#333" stroke-width="3"/><line x1="50" y1="25" x2="50" y2="75" stroke="#333" stroke-width="2"/></svg>`, // Correct (the fragment overlays the inner section, size matches)
+          `<svg width="100" height="100"><rect x="10" y="10" width="80" height="80" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+          `<svg width="100" height="100"><rect x="20" y="20" width="60" height="60" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+          `<svg width="100" height="100"><rect x="20" y="20" width="60" height="30" fill="none" stroke="#333" stroke-width="3"/></svg>`
         ],
         0
+      ],
+      [
+        // Q5: "T with hooks"
+        `<svg width="60" height="60"><line x1="10" y1="20" x2="50" y2="20" stroke="#333" stroke-width="4"/><polyline points="10,20 20,50 30,40 40,50 50,20" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+        [
+          `<svg width="100" height="100"><line x1="30" y1="40" x2="70" y2="40" stroke="#333" stroke-width="4"/><polyline points="30,40 40,80 50,70 60,80 70,40" fill="none" stroke="#333" stroke-width="3"/></svg>`, // Correct, fragment overlays top
+          `<svg width="100" height="100"><rect x="30" y="30" width="40" height="40" fill="none" stroke="#333" stroke-width="2"/></svg>`,
+          `<svg width="100" height="100"><ellipse cx="50" cy="50" rx="25" ry="12" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+          `<svg width="100" height="100"><circle cx="50" cy="50" r="42" fill="none" stroke="#333" stroke-width="2"/></svg>`
+        ],
+        0
+      ],
+      [
+        // Q6: Bowtie + vertical
+        `<svg width="60" height="60"><polygon points="10,30 30,10 50,30 30,50" fill="none" stroke="#333" stroke-width="3"/><line x1="30" y1="10" x2="30" y2="50" stroke="#333" stroke-width="2"/></svg>`,
+        [
+          `<svg width="100" height="100"><polygon points="30,50 50,30 70,50 50,70" fill="none" stroke="#333" stroke-width="3"/><line x1="50" y1="30" x2="50" y2="70" stroke="#333" stroke-width="2"/></svg>`,
+          `<svg width="100" height="100"><polygon points="20,50 50,20 80,50 50,80" fill="none" stroke="#333" stroke-width="3"/><line x1="50" y1="20" x2="50" y2="80" stroke="#333" stroke-width="2"/></svg>`,
+          `<svg width="100" height="100"><polygon points="20,40 50,10 80,40 50,70" fill="none" stroke="#333" stroke-width="3"/><line x1="50" y1="10" x2="50" y2="70" stroke="#333" stroke-width="2"/><polygon points="10,30 30,10 50,30 30,50" fill="none" stroke="#333" stroke-width="3"/><line x1="30" y1="10" x2="30" y2="50" stroke="#333" stroke-width="2"/></svg>`, // Correct, fragment is embedded inside, size identical
+          `<svg width="100" height="100"><polygon points="20,60 60,20 80,60 60,80" fill="none" stroke="#333" stroke-width="3"/></svg>`
+        ],
+        2
+      ],
+      [
+        // Q7: Stepped corner
+        `<svg width="60" height="60"><polyline points="10,50 10,30 30,30 30,10 50,10" fill="none" stroke="#333" stroke-width="4"/></svg>`,
+        [
+          `<svg width="100" height="100"><polyline points="10,90 10,30 30,30 30,10 90,10" fill="none" stroke="#333" stroke-width="4"/></svg>`, // Correct, fragment fits inside (no scale change)
+          `<svg width="100" height="100"><rect x="25" y="25" width="50" height="50" fill="none" stroke="#888" stroke-width="2"/></svg>`,
+          `<svg width="100" height="100"><polygon points="10,10 90,10 90,90 10,90" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+          `<svg width="100" height="100"><polyline points="10,90 90,90 90,10 10,10" fill="none" stroke="#333" stroke-width="3"/></svg>`
+        ],
+        0
+      ],
+      [
+        // Q8: Overlapping triangles (one is fragment)
+        `<svg width="60" height="60"><polygon points="10,50 30,10 50,50" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+        [
+          `<svg width="100" height="100"><polygon points="10,90 50,20 90,90" fill="none" stroke="#333" stroke-width="3"/><polygon points="30,70 50,40 70,70" fill="none" stroke="#999" stroke-width="2"/></svg>`,
+          `<svg width="100" height="100"><polygon points="10,50 30,10 50,50" fill="none" stroke="#333" stroke-width="3"/><polygon points="20,70 40,30 60,70" fill="none" stroke="#999" stroke-width="2"/></svg>`, // Correct, fragment overlays large triangle
+          `<svg width="100" height="100"><polygon points="20,80 60,20 100,80" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+          `<svg width="100" height="100"><ellipse cx="50" cy="60" rx="35" ry="25" fill="none" stroke="#333" stroke-width="3"/></svg>`
+        ],
+        1
+      ],
+      [
+        // Q9: X in a box
+        `<svg width="60" height="60"><rect x="10" y="10" width="40" height="40" fill="none" stroke="#333" stroke-width="3"/><line x1="10" y1="10" x2="50" y2="50" stroke="#333" stroke-width="3"/><line x1="50" y1="10" x2="10" y2="50" stroke="#333" stroke-width="3"/></svg>`,
+        [
+          `<svg width="100" height="100"><rect x="25" y="25" width="50" height="50" fill="none" stroke="#333" stroke-width="3"/><line x1="25" y1="25" x2="75" y2="75" stroke="#333" stroke-width="3"/><line x1="75" y1="25" x2="25" y2="75" stroke="#333" stroke-width="3"/></svg>`, // Correct, fragment overlays a smaller section
+          `<svg width="100" height="100"><rect x="15" y="35" width="70" height="30" fill="none" stroke="#333" stroke-width="2"/></svg>`,
+          `<svg width="100" height="100"><rect x="20" y="20" width="60" height="60" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+          `<svg width="100" height="100"><circle cx="50" cy="50" r="40" fill="none" stroke="#333" stroke-width="2"/></svg>`
+        ],
+        0
+      ],
+      [
+        // Q10: Star fragment
+        `<svg width="60" height="60"><polygon points="30,10 35,30 50,30 38,40 43,60 30,48 17,60 22,40 10,30 25,30" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+        [
+          `<svg width="100" height="100"><polygon points="50,10 58,35 85,35 63,50 70,80 50,62 30,80 37,50 15,35 42,35" fill="none" stroke="#333" stroke-width="3"/></svg>`, // Correct (fragment fits in, identical size)
+          `<svg width="100" height="100"><ellipse cx="50" cy="50" rx="30" ry="40" fill="none" stroke="#333" stroke-width="2"/></svg>`,
+          `<svg width="100" height="100"><rect x="25" y="25" width="50" height="50" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+
+          `<svg width="100" height="100"><polygon points="20,80 60,20 100,80" fill="none" stroke="#333" stroke-width="3"/></svg>`
+        ],
+        0 // Option A: full star, fragment overlays perfectly
       ]
     ];
 
@@ -268,3 +269,4 @@
   </script>
 </body>
 </html>
+
