@@ -2,69 +2,465 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>SVG Trace Lines for 9 Questions</title>
+  <title>11+ Hidden Shape – Real Test Level</title>
   <style>
-    .q-container {
-      position: relative;
-      width: 200px;
-      height: 200px;
-      margin: 22px;
-      display: inline-block;
-      vertical-align: top;
-      border-radius: 12px;
-      box-shadow: 0 0 7px #bbb;
-      background: #fff;
-    }
-    .q-img {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      opacity: 0.23;
-      z-index: 0;
-      pointer-events: none;
-      border-radius: 12px;
-    }
-    .q-svg {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-      pointer-events: none;
-    }
-    body { background: #f6f6f6; font-family: Arial, sans-serif; }
-    h2 { margin: 28px 0 10px 20px; }
+    body { font-family: Arial, sans-serif; background: #f6f6f6; }
+    .container { max-width: 980px; margin: 40px auto; background: #fff; border-radius: 18px; box-shadow: 0 0 20px #bbb; padding: 2.5em; }
+    .q-num { font-weight: bold; }
+    .options { display: flex; justify-content: space-between; margin-bottom: 1.3em; }
+    .option { flex: 1; margin: 0 7px; text-align: center; }
+    .option svg, .fragimg svg { border: 2px solid #ddd; border-radius: 8px; background: #fff; width: 90px; height: 90px; cursor: pointer; transition: border 0.2s; }
+    .fragimg svg { width: 60px; height: 60px; }
+    .option.selected svg { border-color: #2196f3; }
+    .option.correct svg   { border-color: #4caf50; }
+    .option.incorrect svg { border-color: #d32f2f; opacity: 0.6; }
+    .option-label { font-weight: bold; margin-top: 4px; }
+    .result { font-weight: bold; margin: 1em 0; }
+    .timer { font-size: 1.1em; font-weight: bold; color: #d32f2f; margin-bottom: 1em; text-align: right; }
+    .btn { background: #2196f3; color: #fff; border: none; padding: 0.7em 2em; border-radius: 8px; font-size: 1em; cursor: pointer; margin-top: 1em; }
+    .btn:disabled { background: #aaa; }
+    .score-summary { font-size: 1.3em; margin-top: 2em; text-align: center; }
+    .fragimg { display:inline-block; margin-bottom:10px; }
   </style>
 </head>
 <body>
-  <h2>SVG Trace Lines for 9 Questions</h2>
-  <div id="quiz"></div>
+  <div class="container">
+    <div id="quiz-area"></div>
+    <div id="score-area" style="display:none;"></div>
+  </div>
+  
   <script>
-    // Fill this array with your actual file paths (from your HTML)
-    const questions = [
-      { img: "findtheshapeglquestions_files/question1.png",   line: {x1:30,  y1:40,  x2:170, y2:160, color:"red"} },
-      { img: "findtheshapeglquestions_files/question2.png",   line: {x1:60,  y1:40,  x2:140, y2:170, color:"blue"} },
-      { img: "findtheshapeglquestions_files/question3.png",   line: {x1:100, y1:30,  x2:120, y2:170, color:"green"} },
-      { img: "findtheshapeglquestions_files/question4.png",   line: {x1:40,  y1:100, x2:160, y2:120, color:"orange"} },
-      { img: "findtheshapeglquestions_files/question5.png",   line: {x1:30,  y1:170, x2:170, y2:30,  color:"purple"} },
-      { img: "findtheshapeglquestions_files/question6.png",   line: {x1:60,  y1:160, x2:160, y2:60,  color:"teal"} },
-      { img: "findtheshapeglquestions_files/question7.png",   line: {x1:30,  y1:30,  x2:170, y2:170, color:"brown"} },
-      { img: "findtheshapeglquestions_files/question8.png",   line: {x1:80,  y1:20,  x2:120, y2:180, color:"navy"} },
-      { img: "findtheshapeglquestions_files/question9.png",   line: {x1:170, y1:60,  x2:30,  y2:140, color:"magenta"} },
-    ];
+  // --- SVG definitions for each fragment + options ---
+  // Q1
+  const q1_frag = `
+    <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="10,10 30,10 30,25 10,25" fill="none" stroke="#111" stroke-width="2"/>
+    </svg>
+  `;
+  const q1_A = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <rect x="15" y="15" width="60" height="60" fill="none" stroke="#222" stroke-width="2"/>
+      <rect x="30" y="30" width="30" height="30" fill="none" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
+  const q1_B = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <rect x="15" y="15" width="60" height="60" fill="none" stroke="#222" stroke-width="2"/>
+      <rect x="35" y="35" width="20" height="20" fill="none" stroke="#222" stroke-width="2"/>
+      <line x1="15" y1="15" x2="75" y2="75" stroke="#222" stroke-width="1.5"/>
+    </svg>
+  `;
+  const q1_C = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="20" width="50" height="50" fill="none" stroke="#222" stroke-width="2"/>
+      <rect x="40" y="40" width="10" height="20" fill="none" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
+  const q1_D = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <rect x="30" y="30" width="30" height="30" fill="none" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
 
-    const quizDiv = document.getElementById('quiz');
-    questions.forEach((q, i) => {
-      const div = document.createElement('div');
-      div.className = "q-container";
-      div.innerHTML = `
-        <img class="q-img" src="${q.img}" alt="Q${i+1}">
-        <svg class="q-svg" viewBox="0 0 200 200">
-          <line x1="${q.line.x1}" y1="${q.line.y1}" x2="${q.line.x2}" y2="${q.line.y2}" 
-                stroke="${q.line.color}" stroke-width="4" />
-        </svg>
+  // Q2
+  const q2_frag = `
+    <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="10,10 40,10 25,40" fill="none" stroke="#111" stroke-width="2"/>
+    </svg>
+  `;
+  const q2_A = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="20,60 70,60 45,20" fill="none" stroke="#222" stroke-width="2"/>
+      <polygon points="30,45 60,45 45,25" fill="none" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
+  const q2_B = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="30,80 70,80 50,30" fill="none" stroke="#222" stroke-width="2"/>
+      <polygon points="35,70 65,70 50,40" fill="none" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
+  const q2_C = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="30,20 70,20 50,70" fill="none" stroke="#222" stroke-width="2"/>
+      <polygon points="40,40 60,40 50,60" fill="none" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
+  const q2_D = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="20,50 60,50 40,20" fill="none" stroke="#222" stroke-width="2"/>
+      <polygon points="30,40 50,40 40,25" fill="none" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
+
+  // Q3
+  const q3_frag = `
+    <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="10" width="25" height="25" fill="none" stroke="#111" stroke-width="2"/>
+      <rect x="17" y="17" width="11" height="11" fill="none" stroke="#111" stroke-width="2"/>
+    </svg>
+  `;
+  const q3_A = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="20" width="50" height="50" fill="none" stroke="#222" stroke-width="2"/>
+      <rect x="30" y="30" width="30" height="30" fill="none" stroke="#222" stroke-width="2"/>
+      <rect x="40" y="40" width="10" height="10" fill="none" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
+  const q3_B = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <rect x="25" y="25" width="40" height="40" fill="none" stroke="#222" stroke-width="2"/>
+      <rect x="35" y="35" width="20" height="20" fill="none" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
+  const q3_C = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="10" width="40" height="40" fill="none" stroke="#222" stroke-width="2"/>
+      <rect x="20" y="20" width="20" height="20" fill="none" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
+  const q3_D = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <rect x="30" y="30" width="30" height="30" fill="none" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
+
+  // Q4
+  const q4_frag = `
+    <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="10,40 30,10 50,40" fill="none" stroke="#111" stroke-width="2"/>
+    </svg>
+  `;
+  const q4_A = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="30,70 70,70 50,30" fill="none" stroke="#222" stroke-width="2"/>
+      <polygon points="35,60 65,60 50,40" fill="none" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
+  const q4_B = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="30,20 70,20 50,70" fill="none" stroke="#222" stroke-width="2"/>
+      <polygon points="40,40 60,40 50,60" fill="none" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
+  const q4_C = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="20,50 60,50 40,20" fill="none" stroke="#222" stroke-width="2"/>
+      <polygon points="30,40 50,40 40,25" fill="none" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
+  const q4_D = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="40,30 60,30 50,50" fill="none" stroke="#222" stroke-width="2"/>
+      <polygon points="45,45 55,45 50,35" fill="none" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
+
+  // Q5 – star
+  const q5_frag = `
+    <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="25,5 28,20 45,20 30,30 35,45 25,35 15,45 20,30 5,20 22,20"
+               fill="none" stroke="#111" stroke-width="2"/>
+    </svg>
+  `;
+  const q5_A = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="45,10 50,35 75,35 55,55 60,80 45,65 30,80 35,55 15,35 40,35"
+               fill="none" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
+  const q5_B = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="10" width="70" height="70"
+            fill="none" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
+  const q5_C = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="35,20 40,45 65,45 45,65 50,90 35,75 20,90 25,65 5,45 30,45"
+               fill="none" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
+  const q5_D = q5_frag;  // identical shape
+
+  // Q6 – grid + diagonal
+  const q6_frag = `
+    <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="10" width="30" height="30" fill="none" stroke="#111" stroke-width="2"/>
+      <line x1="10" y1="10" x2="40" y2="40" stroke="#111" stroke-width="2"/>
+    </svg>
+  `;
+  const q6_A = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="20" width="50" height="50" fill="none" stroke="#222" stroke-width="2"/>
+      <rect x="40" y="40" width="10" height="10" fill="none" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
+  const q6_B = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <rect x="15" y="15" width="60" height="60" fill="none" stroke="#222" stroke-width="2"/>
+      <line x1="15" y1="15" x2="75" y2="75" stroke="#222" stroke-width="2"/>
+      <line x1="75" y1="15" x2="15" y2="75" stroke="#222" stroke-width="2"/>
+      <rect x="30" y="30" width="30" height="30" fill="none" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
+  const q6_C = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="10" width="70" height="70" fill="none" stroke="#222" stroke-width="2"/>
+      <rect x="30" y="30" width="30" height="30" fill="none" stroke="#222" stroke-width="2"/>
+      <line x1="10" y1="10" x2="80" y2="80" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
+  const q6_D = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <rect x="30" y="30" width="30" height="30" fill="none" stroke="#222" stroke-width="2"/>
+      <rect x="45" y="45" width="10" height="10" fill="none" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
+
+  // Q7 – circle target
+  const q7_frag = `
+    <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="25" cy="25" rx="15" ry="10" fill="none" stroke="#111" stroke-width="2"/>
+      <ellipse cx="25" cy="25" rx="7" ry="4" fill="none" stroke="#111" stroke-width="2"/>
+    </svg>
+  `;
+  const q7_A = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="45" cy="45" rx="35" ry="20" fill="none" stroke="#222" stroke-width="2"/>
+      <ellipse cx="45" cy="45" rx="15" ry="8" fill="none" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
+  const q7_B = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="45" cy="45" rx="28" ry="20" fill="none" stroke="#222" stroke-width="2"/>
+      <ellipse cx="45" cy="45" rx="7"  ry="4" fill="none" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
+  const q7_C = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="45" cy="45" rx="24" ry="16" fill="none" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
+  const q7_D = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="45" cy="45" rx="14" ry="10" fill="none" stroke="#222" stroke-width="2"/>
+      <ellipse cx="45" cy="45" rx="5"  ry="3"  fill="none" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
+
+  // Q8 – arrow
+  const q8_frag = `
+    <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="10,25 25,10 40,25 25,40" fill="none" stroke="#111" stroke-width="2"/>
+      <line x1="25" y1="10" x2="25" y2="40" stroke="#111" stroke-width="2"/>
+    </svg>
+  `;
+  const q8_A = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="20,45 45,20 70,45 45,70" fill="none" stroke="#222" stroke-width="2"/>
+      <line x1="45" y1="20" x2="45" y2="70" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
+  const q8_B = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="25,25 65,25 45,65" fill="none" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
+  const q8_C = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="30" width="50" height="10" fill="none" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
+  const q8_D = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="10,50 45,10 80,50 45,90" fill="none" stroke="#222" stroke-width="2"/>
+    </svg>
+  `;
+
+  // Q9 – grid of quarter‑circles (TODO: drop in your exact paths)
+  const q9_frag = `
+    <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+      <!-- TODO: your exact fragment SVG here -->
+      <path d="M5,5 L45,5 L45,45 L5,45 Z M5,25 A20,20 0 0,1 25,5" fill="none" stroke="#111" stroke-width="2"/>
+    </svg>
+  `;
+  const q9_A = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <!-- TODO -->
+    </svg>
+  `;
+  const q9_B = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <!-- TODO -->
+    </svg>
+  `;
+  const q9_C = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <!-- TODO -->
+    </svg>
+  `;
+  const q9_D = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <!-- TODO -->
+    </svg>
+  `;
+
+  // Q10 – star‑burst (TODO: drop in your exact paths)
+  const q10_frag = `
+    <svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+      <!-- TODO -->
+      <polygon points="10,10 30,15 40,35 25,25 15,45" fill="none" stroke="#111" stroke-width="2"/>
+    </svg>
+  `;
+  const q10_A = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <!-- TODO -->
+    </svg>
+  `;
+  const q10_B = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <!-- TODO -->
+    </svg>
+  `;
+  const q10_C = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <!-- TODO -->
+    </svg>
+  `;
+  const q10_D = `
+    <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <!-- TODO -->
+    </svg>
+  `;
+
+  // --- assemble all 10 questions with your answer‑key B,C,C,B,A,D,D,C,B,C (i.e. 1,2,2,1,0,3,3,2,1,2) ---
+  const questions = [
+    [q1_frag,  [q1_A,  q1_B,  q1_C,  q1_D ],  1],
+    [q2_frag,  [q2_A,  q2_B,  q2_C,  q2_D ],  2],
+    [q3_frag,  [q3_A,  q3_B,  q3_C,  q3_D ],  2],
+    [q4_frag,  [q4_A,  q4_B,  q4_C,  q4_D ],  1],
+    [q5_frag,  [q5_A,  q5_B,  q5_C,  q5_D ],  0],
+    [q6_frag,  [q6_A,  q6_B,  q6_C,  q6_D ],  3],
+    [q7_frag,  [q7_A,  q7_B,  q7_C,  q7_D ],  3],
+    [q8_frag,  [q8_A,  q8_B,  q8_C,  q8_D ],  2],
+    [q9_frag,  [q9_A,  q9_B,  q9_C,  q9_D ],  1],
+    [q10_frag, [q10_A, q10_B, q10_C, q10_D],  2]
+  ];
+
+  let current = 0, score = 0, selected = null, timer = 30, timerInterval = null, answered = false;
+
+  function showQuestion() {
+    selected = null; answered = false; timer = 30;
+    clearInterval(timerInterval);
+
+    const [frag, opts, correctIdx] = questions[current];
+    let html = `
+      <div class="q-num">Question ${current+1} of ${questions.length}</div>
+      <div class="timer" id="timer">Time left: 30s</div>
+      <div style="text-align:center; margin-bottom:1.1em;">
+        <span class="fragimg">${frag}</span>
+        <div style="margin-top:.7em;font-weight:bold;">Which option contains the hidden shape?</div>
+      </div>
+      <div class="options">
+    `;
+    ['A','B','C','D'].forEach((lab,i) => {
+      html += `
+        <div class="option" id="opt${i}" onclick="selectOption(${i})">
+          ${opts[i]}
+          <div class="option-label">${lab}</div>
+        </div>
       `;
-      quizDiv.appendChild(div);
     });
+    html += `
+      </div>
+      <button class="btn" id="submitBtn" onclick="submitAnswer()" disabled>Submit</button>
+      <div id="resultArea"></div>
+    `;
+    document.getElementById('quiz-area').innerHTML = html;
+    startTimer();
+  }
+
+  window.selectOption = idx => {
+    if (answered) return;
+    selected = idx;
+    for (let i=0; i<4; i++) {
+      document.getElementById('opt'+i).classList.toggle('selected', i===idx);
+    }
+    document.getElementById('submitBtn').disabled = false;
+  };
+
+  function startTimer() {
+    document.getElementById('timer').textContent = `Time left: ${timer}s`;
+    timerInterval = setInterval(() => {
+      timer--;
+      document.getElementById('timer').textContent = `Time left: ${timer}s`;
+      if (timer===0) {
+        clearInterval(timerInterval);
+        submitAnswer(true);
+      }
+    },1000);
+  }
+
+  function submitAnswer(timeout=false) {
+    if (answered) return;
+    answered = true;
+    clearInterval(timerInterval);
+
+    const correctIdx = questions[current][2];
+    let resultText = '';
+    if (timeout) {
+      resultText = `⏰ Time's up!<br>Correct answer: <b>${['A','B','C','D'][correctIdx]}</b>`;
+    } else if (selected===correctIdx) {
+      resultText = `<span style="color:green;">✔ Correct!</span>`;
+      score++;
+    } else {
+      resultText = `❌ Wrong. Correct answer: <b>${['A','B','C','D'][correctIdx]}</b>`;
+    }
+
+    for (let i=0; i<4; i++) {
+      const d = document.getElementById('opt'+i);
+      d.classList.remove('selected');
+      if (i===correctIdx)   d.classList.add('correct');
+      else if (!timeout && i===selected) d.classList.add('incorrect');
+    }
+    document.getElementById('resultArea').innerHTML = `<div class="result">${resultText}</div>`;
+    document.getElementById('submitBtn').disabled = true;
+
+    setTimeout(() => {
+      current++;
+      if (current < questions.length) showQuestion();
+      else showScore();
+    }, 1800);
+  }
+
+  function showScore() {
+    document.getElementById('quiz-area').style.display = 'none';
+    document.getElementById('score-area').style.display = '';
+    document.getElementById('score-area').innerHTML = `
+      <div class="score-summary">
+        <h2>Quiz Complete!</h2>
+        <p>Your score: <b>${score}</b> out of ${questions.length}</p>
+        <button class="btn" onclick="restartQuiz()">Try Again</button>
+      </div>
+    `;
+  }
+
+  window.restartQuiz = () => {
+    current = 0; score = 0;
+    document.getElementById('quiz-area').style.display = '';
+    document.getElementById('score-area').style.display = 'none';
+    showQuestion();
+  };
+
+  document.addEventListener('keydown', e => {
+    if (e.key==='Enter' && !document.getElementById('submitBtn').disabled) {
+      submitAnswer();
+    }
+  });
+
+  // start
+  showQuestion();
   </script>
 </body>
 </html>
