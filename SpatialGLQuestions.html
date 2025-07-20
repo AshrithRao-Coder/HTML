@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Non Verbal Reasoning Quiz (Hidden Shape)</title>
+  <title>Find the Hidden Shape Quiz</title>
   <style>
     body { font-family: Arial, sans-serif; background: #f8f8f8; }
-    .container { max-width: 520px; margin: 40px auto; background: #fff; border-radius: 12px; box-shadow: 0 0 16px #ddd; padding: 2em; }
+    .container { max-width: 540px; margin: 40px auto; background: #fff; border-radius: 14px; box-shadow: 0 0 16px #ddd; padding: 2em; }
     .q-num { font-weight: bold; }
     .shape-img { display: block; margin: 0 auto 1em; }
     .options { display: flex; justify-content: space-between; margin-bottom: 1em; }
@@ -28,117 +28,117 @@
     <div id="score-area" style="display:none;"></div>
   </div>
   <script>
-    // Each array: [hiddenShapeSVG, [A, B, C, D], correctAnswerIndex]
+    // 10 questions based on the patterns in your photo (not exact, but closely modeled)
     const questions = [
-      // Q1
       [
-        `<svg width="80" height="80"><rect x="10" y="10" width="60" height="60" fill="none" stroke="#333" stroke-width="2"/><line x1="10" y1="10" x2="70" y2="70" stroke="#333"/><line x1="10" y1="70" x2="70" y2="10" stroke="#333"/></svg>`,
+        // Q1: small triangle
+        `<svg width="48" height="48"><polygon points="24,8 40,40 8,40" fill="none" stroke="#333" stroke-width="3"/></svg>`,
         [
-          `<svg width="80" height="80"><rect x="10" y="10" width="60" height="60" fill="none" stroke="#333" stroke-width="2"/></svg>`,
-          `<svg width="80" height="80"><rect x="10" y="10" width="60" height="60" fill="none" stroke="#333" stroke-width="2"/><line x1="10" y1="10" x2="70" y2="70" stroke="#333"/><line x1="10" y1="70" x2="70" y2="10" stroke="#333"/></svg>`,
-          `<svg width="80" height="80"><rect x="20" y="20" width="40" height="40" fill="none" stroke="#333" stroke-width="2"/></svg>`,
-          `<svg width="80" height="80"><rect x="10" y="10" width="60" height="60" fill="none" stroke="#333" stroke-width="2"/><line x1="40" y1="10" x2="40" y2="70" stroke="#333"/></svg>`
+          `<svg width="80" height="80"><rect x="20" y="20" width="40" height="40" fill="none" stroke="#333" stroke-width="3"/><polygon points="40,20 60,60 20,60" fill="none" stroke="#999" stroke-width="2"/></svg>`,
+          `<svg width="80" height="80"><polygon points="40,10 70,70 10,70" fill="none" stroke="#333" stroke-width="3"/><polygon points="40,25 55,60 25,60" fill="none" stroke="#999" stroke-width="2"/></svg>`, // contains the small triangle at top
+          `<svg width="80" height="80"><circle cx="40" cy="40" r="30" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+          `<svg width="80" height="80"><rect x="15" y="30" width="50" height="20" fill="none" stroke="#333" stroke-width="3"/></svg>`
         ],
         1
       ],
-      // Q2
       [
-        `<svg width="80" height="80"><polygon points="40,10 70,70 10,70" fill="none" stroke="#333" stroke-width="2"/><line x1="40" y1="10" x2="40" y2="70" stroke="#333"/></svg>`,
+        // Q2: a short thick diagonal line
+        `<svg width="48" height="48"><line x1="12" y1="36" x2="36" y2="12" stroke="#333" stroke-width="6"/></svg>`,
         [
-          `<svg width="80" height="80"><polygon points="40,10 70,70 10,70" fill="none" stroke="#333" stroke-width="2"/></svg>`,
-          `<svg width="80" height="80"><polygon points="40,10 70,70 10,70" fill="none" stroke="#333" stroke-width="2"/><line x1="40" y1="10" x2="40" y2="70" stroke="#333"/></svg>`,
-          `<svg width="80" height="80"><polygon points="10,10 70,10 40,70" fill="none" stroke="#333" stroke-width="2"/></svg>`,
-          `<svg width="80" height="80"><polygon points="40,10 70,70 10,70" fill="none" stroke="#333" stroke-width="2"/><line x1="10" y1="70" x2="70" y2="70" stroke="#333"/></svg>`
+          `<svg width="80" height="80"><polygon points="10,10 70,70 10,70" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+          `<svg width="80" height="80"><rect x="25" y="25" width="30" height="30" fill="none" stroke="#333" stroke-width="3"/><line x1="30" y1="60" x2="60" y2="30" stroke="#333" stroke-width="6"/></svg>`, // contains the thick diagonal
+          `<svg width="80" height="80"><circle cx="40" cy="40" r="30" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+          `<svg width="80" height="80"><polygon points="10,10 70,40 40,70" fill="none" stroke="#333" stroke-width="3"/></svg>`
         ],
         1
       ],
-      // Q3
       [
-        `<svg width="80" height="80"><rect x="20" y="20" width="40" height="40" fill="none" stroke="#333" stroke-width="2"/><line x1="20" y1="40" x2="60" y2="40" stroke="#333"/></svg>`,
+        // Q3: "L" shaped line
+        `<svg width="48" height="48"><polyline points="12,12 12,36 36,36" fill="none" stroke="#333" stroke-width="4"/></svg>`,
         [
-          `<svg width="80" height="80"><rect x="10" y="10" width="60" height="60" fill="none" stroke="#333" stroke-width="2"/><line x1="40" y1="10" x2="40" y2="70" stroke="#333"/></svg>`,
-          `<svg width="80" height="80"><rect x="20" y="20" width="40" height="40" fill="none" stroke="#333" stroke-width="2"/><line x1="20" y1="40" x2="60" y2="40" stroke="#333"/></svg>`,
-          `<svg width="80" height="80"><rect x="20" y="20" width="40" height="40" fill="none" stroke="#333" stroke-width="2"/><line x1="20" y1="60" x2="60" y2="60" stroke="#333"/></svg>`,
-          `<svg width="80" height="80"><rect x="20" y="20" width="40" height="40" fill="none" stroke="#333" stroke-width="2"/></svg>`
+          `<svg width="80" height="80"><rect x="10" y="10" width="60" height="60" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+          `<svg width="80" height="80"><polygon points="10,10 70,70 40,30" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+          `<svg width="80" height="80"><polyline points="20,20 20,60 60,60" fill="none" stroke="#333" stroke-width="4"/><rect x="20" y="20" width="40" height="40" fill="none" stroke="#999" stroke-width="2"/></svg>`, // contains L-shape
+          `<svg width="80" height="80"><circle cx="40" cy="40" r="30" fill="none" stroke="#333" stroke-width="3"/></svg>`
+        ],
+        2
+      ],
+      [
+        // Q4: two parallel horizontal lines
+        `<svg width="48" height="48"><line x1="10" y1="18" x2="38" y2="18" stroke="#333" stroke-width="3"/><line x1="10" y1="30" x2="38" y2="30" stroke="#333" stroke-width="3"/></svg>`,
+        [
+          `<svg width="80" height="80"><rect x="25" y="25" width="30" height="30" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+          `<svg width="80" height="80"><rect x="20" y="20" width="40" height="40" fill="none" stroke="#333" stroke-width="3"/><line x1="30" y1="35" x2="50" y2="35" stroke="#333" stroke-width="3"/><line x1="30" y1="45" x2="50" y2="45" stroke="#333" stroke-width="3"/></svg>`, // contains two horizontal lines
+          `<svg width="80" height="80"><circle cx="40" cy="40" r="30" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+          `<svg width="80" height="80"><polygon points="40,20 60,60 20,60" fill="none" stroke="#333" stroke-width="3"/></svg>`
         ],
         1
       ],
-      // Q4
       [
-        `<svg width="80" height="80"><polygon points="40,10 70,40 40,70 10,40" fill="none" stroke="#333" stroke-width="2"/><line x1="10" y1="40" x2="70" y2="40" stroke="#333"/></svg>`,
+        // Q5: "V" shape
+        `<svg width="48" height="48"><polyline points="12,12 24,36 36,12" fill="none" stroke="#333" stroke-width="3"/></svg>`,
         [
-          `<svg width="80" height="80"><polygon points="40,10 70,40 40,70 10,40" fill="none" stroke="#333" stroke-width="2"/></svg>`,
-          `<svg width="80" height="80"><polygon points="40,10 70,40 40,70 10,40" fill="none" stroke="#333" stroke-width="2"/><line x1="10" y1="40" x2="70" y2="40" stroke="#333"/></svg>`,
-          `<svg width="80" height="80"><rect x="20" y="20" width="40" height="40" fill="none" stroke="#333" stroke-width="2"/></svg>`,
-          `<svg width="80" height="80"><polygon points="40,10 70,40 10,40" fill="none" stroke="#333" stroke-width="2"/></svg>`
+          `<svg width="80" height="80"><polygon points="10,10 70,70 10,70" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+          `<svg width="80" height="80"><rect x="10" y="10" width="60" height="60" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+          `<svg width="80" height="80"><polyline points="20,20 40,60 60,20" fill="none" stroke="#333" stroke-width="3"/><rect x="20" y="20" width="40" height="40" fill="none" stroke="#999" stroke-width="2"/></svg>`, // contains "V" shape
+          `<svg width="80" height="80"><circle cx="40" cy="40" r="30" fill="none" stroke="#333" stroke-width="3"/></svg>`
+        ],
+        2
+      ],
+      [
+        // Q6: small diamond
+        `<svg width="48" height="48"><polygon points="24,8 40,24 24,40 8,24" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+        [
+          `<svg width="80" height="80"><rect x="15" y="15" width="50" height="50" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+          `<svg width="80" height="80"><polygon points="40,10 70,40 40,70 10,40" fill="none" stroke="#333" stroke-width="3"/><polygon points="40,25 55,40 40,55 25,40" fill="none" stroke="#999" stroke-width="2"/></svg>`, // contains diamond
+          `<svg width="80" height="80"><circle cx="40" cy="40" r="30" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+          `<svg width="80" height="80"><polygon points="10,10 70,40 40,70" fill="none" stroke="#333" stroke-width="3"/></svg>`
         ],
         1
       ],
-      // Q5
       [
-        `<svg width="80" height="80"><polygon points="40,10 70,70 10,70" fill="none" stroke="#333" stroke-width="2"/><line x1="10" y1="70" x2="70" y2="70" stroke="#333"/><line x1="40" y1="10" x2="40" y2="70" stroke="#333"/></svg>`,
+        // Q7: vertical line segment
+        `<svg width="48" height="48"><line x1="24" y1="12" x2="24" y2="36" stroke="#333" stroke-width="3"/></svg>`,
         [
-          `<svg width="80" height="80"><polygon points="40,10 70,70 10,70" fill="none" stroke="#333" stroke-width="2"/><line x1="40" y1="10" x2="40" y2="70" stroke="#333"/></svg>`,
-          `<svg width="80" height="80"><polygon points="40,10 70,70 10,70" fill="none" stroke="#333" stroke-width="2"/><line x1="10" y1="70" x2="70" y2="70" stroke="#333"/><line x1="40" y1="10" x2="40" y2="70" stroke="#333"/></svg>`,
-          `<svg width="80" height="80"><polygon points="40,10 70,70 10,70" fill="none" stroke="#333" stroke-width="2"/><line x1="10" y1="70" x2="40" y2="10" stroke="#333"/></svg>`,
-          `<svg width="80" height="80"><polygon points="40,10 70,70 10,70" fill="none" stroke="#333" stroke-width="2"/></svg>`
-        ],
-        1
-      ],
-      // Q6
-      [
-        `<svg width="80" height="80"><rect x="15" y="15" width="50" height="50" fill="none" stroke="#333" stroke-width="2"/><line x1="40" y1="15" x2="40" y2="65" stroke="#333"/></svg>`,
-        [
-          `<svg width="80" height="80"><rect x="15" y="15" width="50" height="50" fill="none" stroke="#333" stroke-width="2"/><line x1="40" y1="15" x2="40" y2="65" stroke="#333"/></svg>`,
-          `<svg width="80" height="80"><rect x="15" y="15" width="50" height="50" fill="none" stroke="#333" stroke-width="2"/><line x1="15" y1="40" x2="65" y2="40" stroke="#333"/></svg>`,
-          `<svg width="80" height="80"><rect x="15" y="15" width="50" height="50" fill="none" stroke="#333" stroke-width="2"/></svg>`,
-          `<svg width="80" height="80"><rect x="25" y="25" width="30" height="30" fill="none" stroke="#333" stroke-width="2"/></svg>`
+          `<svg width="80" height="80"><rect x="10" y="10" width="60" height="60" fill="none" stroke="#333" stroke-width="3"/><line x1="40" y1="20" x2="40" y2="60" stroke="#333" stroke-width="3"/></svg>`, // contains vertical segment
+          `<svg width="80" height="80"><circle cx="40" cy="40" r="30" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+          `<svg width="80" height="80"><polygon points="10,70 40,10 70,70" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+          `<svg width="80" height="80"><polygon points="20,20 60,20 40,60" fill="none" stroke="#333" stroke-width="3"/></svg>`
         ],
         0
       ],
-      // Q7
       [
-        `<svg width="80" height="80"><polygon points="10,10 70,10 70,70 10,70" fill="none" stroke="#333" stroke-width="2"/><line x1="10" y1="40" x2="70" y2="40" stroke="#333"/></svg>`,
+        // Q8: semicircle arc
+        `<svg width="48" height="48"><path d="M10,38 Q24,10 38,38" fill="none" stroke="#333" stroke-width="3"/></svg>`,
         [
-          `<svg width="80" height="80"><polygon points="10,10 70,10 70,70 10,70" fill="none" stroke="#333" stroke-width="2"/><line x1="10" y1="10" x2="70" y2="70" stroke="#333"/></svg>`,
-          `<svg width="80" height="80"><polygon points="10,10 70,10 70,70 10,70" fill="none" stroke="#333" stroke-width="2"/><line x1="10" y1="40" x2="70" y2="40" stroke="#333"/></svg>`,
-          `<svg width="80" height="80"><polygon points="10,10 70,10 70,70 10,70" fill="none" stroke="#333" stroke-width="2"/><line x1="40" y1="10" x2="40" y2="70" stroke="#333"/></svg>`,
-          `<svg width="80" height="80"><polygon points="10,10 70,10 70,70 10,70" fill="none" stroke="#333" stroke-width="2"/></svg>`
+          `<svg width="80" height="80"><circle cx="40" cy="40" r="30" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+          `<svg width="80" height="80"><rect x="20" y="20" width="40" height="40" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+          `<svg width="80" height="80"><path d="M20,60 Q40,20 60,60" fill="none" stroke="#333" stroke-width="3"/></svg>`, // contains semicircle
+          `<svg width="80" height="80"><polygon points="10,10 70,40 40,70" fill="none" stroke="#333" stroke-width="3"/></svg>`
         ],
-        1
+        2
       ],
-      // Q8
       [
-        `<svg width="80" height="80"><polygon points="40,10 70,40 40,70 10,40" fill="none" stroke="#333" stroke-width="2"/><circle cx="40" cy="40" r="10" fill="none" stroke="#333"/></svg>`,
+        // Q9: square with diagonal
+        `<svg width="48" height="48"><rect x="12" y="12" width="24" height="24" fill="none" stroke="#333" stroke-width="3"/><line x1="12" y1="12" x2="36" y2="36" stroke="#333" stroke-width="3"/></svg>`,
         [
-          `<svg width="80" height="80"><polygon points="40,10 70,40 40,70 10,40" fill="none" stroke="#333" stroke-width="2"/><circle cx="40" cy="40" r="20" fill="none" stroke="#333"/></svg>`,
-          `<svg width="80" height="80"><polygon points="40,10 70,40 40,70 10,40" fill="none" stroke="#333" stroke-width="2"/><circle cx="40" cy="40" r="10" fill="none" stroke="#333"/></svg>`,
-          `<svg width="80" height="80"><polygon points="40,10 70,40 40,70 10,40" fill="none" stroke="#333" stroke-width="2"/></svg>`,
-          `<svg width="80" height="80"><polygon points="10,40 70,40 40,70" fill="none" stroke="#333" stroke-width="2"/></svg>`
-        ],
-        1
-      ],
-      // Q9
-      [
-        `<svg width="80" height="80"><circle cx="40" cy="40" r="30" fill="none" stroke="#333" stroke-width="2"/><circle cx="40" cy="40" r="15" fill="none" stroke="#333"/></svg>`,
-        [
-          `<svg width="80" height="80"><circle cx="40" cy="40" r="30" fill="none" stroke="#333" stroke-width="2"/><circle cx="40" cy="40" r="15" fill="none" stroke="#333"/></svg>`,
-          `<svg width="80" height="80"><circle cx="40" cy="40" r="30" fill="none" stroke="#333" stroke-width="2"/></svg>`,
-          `<svg width="80" height="80"><circle cx="40" cy="40" r="15" fill="none" stroke="#333" stroke-width="2"/></svg>`,
-          `<svg width="80" height="80"><circle cx="40" cy="40" r="30" fill="none" stroke="#333" stroke-width="2"/><line x1="25" y1="40" x2="55" y2="40" stroke="#333"/></svg>`
+          `<svg width="80" height="80"><rect x="20" y="20" width="40" height="40" fill="none" stroke="#333" stroke-width="3"/><line x1="20" y1="20" x2="60" y2="60" stroke="#333" stroke-width="3"/></svg>`, // contains matching mini square+diagonal
+          `<svg width="80" height="80"><circle cx="40" cy="40" r="30" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+          `<svg width="80" height="80"><polygon points="10,10 70,70 10,70" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+          `<svg width="80" height="80"><polygon points="40,10 70,70 10,70" fill="none" stroke="#333" stroke-width="3"/></svg>`
         ],
         0
       ],
-      // Q10
       [
-        `<svg width="80" height="80"><rect x="20" y="20" width="40" height="40" fill="none" stroke="#333" stroke-width="2"/><line x1="20" y1="20" x2="60" y2="60" stroke="#333"/></svg>`,
+        // Q10: small filled circle
+        `<svg width="48" height="48"><circle cx="24" cy="24" r="6" fill="#333" /></svg>`,
         [
-          `<svg width="80" height="80"><rect x="20" y="20" width="40" height="40" fill="none" stroke="#333" stroke-width="2"/><line x1="20" y1="60" x2="60" y2="20" stroke="#333"/></svg>`,
-          `<svg width="80" height="80"><rect x="20" y="20" width="40" height="40" fill="none" stroke="#333" stroke-width="2"/><line x1="20" y1="20" x2="60" y2="60" stroke="#333"/></svg>`,
-          `<svg width="80" height="80"><rect x="10" y="10" width="60" height="60" fill="none" stroke="#333" stroke-width="2"/></svg>`,
-          `<svg width="80" height="80"><rect x="20" y="20" width="40" height="40" fill="none" stroke="#333" stroke-width="2"/></svg>`
+          `<svg width="80" height="80"><rect x="10" y="10" width="60" height="60" fill="none" stroke="#333" stroke-width="3"/><circle cx="40" cy="40" r="8" fill="#333"/></svg>`, // option contains small filled circle
+          `<svg width="80" height="80"><rect x="10" y="10" width="60" height="60" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+          `<svg width="80" height="80"><circle cx="40" cy="40" r="32" fill="none" stroke="#333" stroke-width="3"/></svg>`,
+          `<svg width="80" height="80"><polygon points="20,20 60,20 40,60" fill="none" stroke="#333" stroke-width="3"/></svg>`
         ],
-        1
+        0
       ]
     ];
 
@@ -154,13 +154,13 @@
       answered = false;
       timer = 30;
       clearInterval(timerInterval);
-      const [hiddenShape, opts] = questions[current];
+      const [questionShape, opts] = questions[current];
 
       let html = `
         <div class="q-num">Question ${current + 1} of ${questions.length}</div>
         <div class="timer" id="timer">Time left: 30s</div>
         <div style="text-align:center;margin-bottom:1em;">
-          <div style="margin:0 auto 0.5em;display:inline-block;">${hiddenShape}</div><br>
+          <div style="margin:0 auto 0.5em;display:inline-block;">${questionShape}</div><br>
           <span>Which option contains the hidden shape?</span>
         </div>
         <div class="options">`;
